@@ -1,0 +1,132 @@
+package com.example.voting;
+
+
+
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+
+@SpringBootApplication
+public class VotingServiceApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(VotingServiceApplication.class, args);
+	}
+
+}
+
+
+@Configuration
+class LoadDatabase {
+	
+	private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
+	
+	@Bean
+	CommandLineRunner initDatabase(VotingServiceRepository repository){
+		return args -> {
+			 log.info("Preloading " + repository.save(new Voter("Bean the Dog")));
+		     log.info("Preloading " + repository.save(new Voter("Milo Meow")));
+		    };
+	}
+}
+
+interface VotingServiceRepository extends JpaRepository<Voter, Long> {
+	
+}
+
+
+@Entity
+class Voter {
+	
+	
+	private @Id @GeneratedValue Long id;
+	private String Name;
+	
+	// Constructors
+	public Voter() {}
+	public Voter(String name) {
+		super();
+		Name = name;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public String getName() {
+		return Name;
+	}
+	
+	public void setName(String name) {
+		Name = name;
+	}
+	
+	@Override
+	public String toString() {
+		return "Voter [id=" + id + ", Name=" + Name + "]";
+	}
+	
+}
+
+
+
+@RestController
+class EmployeeController{
+	
+	private final VotingServiceRepository repository;
+	
+	EmployeeController(VotingServiceRepository repository) {
+		this.repository = repository;
+	}	
+
+	// Aggregate root
+	// tag::get-aggregate-root[]
+	@GetMapping("/voters")
+	List<Voter> all() {
+		return repository.findAll();
+	}
+	// end::get-aggregate-root[]
+}
+
+// Error handler
+class VoterNotFoundException extends RuntimeException {
+
+	VoterNotFoundException(Long id) {
+	    super("Could not find voter " + id);
+	  }
+}
+
+@ControllerAdvice
+class VoterNotFoundAdvice {
+
+  @ResponseBody
+  @ExceptionHandler(VoterNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  String voterNotFoundHandler(VoterNotFoundException ex) {
+    return ex.getMessage();
+  }
+}

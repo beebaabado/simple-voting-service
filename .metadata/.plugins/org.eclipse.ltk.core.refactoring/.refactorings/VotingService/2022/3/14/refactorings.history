@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;VotingServiceApplicationTests.java&apos; to &apos;VotingService-1/src/test/java/com.example.voting&apos;&#x0A;- Original project: &apos;VotingService&apos;&#x0A;- Destination element: &apos;VotingService-1/src/test/java/com.example.voting&apos;&#x0A;- Original element: &apos;com.example.voting.VotingServiceApplicationTests.java&apos;" description="Copy compilation unit" destination="=VotingService-1/src\/test\/java=/gradle_scope=/test=/=/gradle_used_by_scope=/test=/=/test=/true=/&lt;com.example.voting" element1="/src\/test\/java=/optional=/true=/=/maven.pomderived=/true=/=/test=/true=/&lt;com.example.voting{VotingServiceApplicationTests.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1648764983534" units="1" version="1.0"/>
+</session>

@@ -1,0 +1,254 @@
+package com.example.voting;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+
+@SpringBootApplication
+public class VotingServiceApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(VotingServiceApplication.class, args);
+	}
+
+}
+
+
+// DATABASE MODEL / CONFIGURATION
+
+@Configuration
+class LoadDatabase {
+	
+	private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
+	
+	@Bean
+	CommandLineRunner initDatabase(VoterRepository repository){
+		return args -> {
+			 log.info("Preloading " + repository.save(new Voter("Bean the Dog")));
+		     log.info("Preloading " + repository.save(new Voter("Milo Meow")));
+		    };
+	}	
+	
+	@Bean	    
+    CommandLineRunner initDatabase(QuestionRepository repository){
+		return args -> { 
+			 log.info("Preloading " + repository.save(new Question("Do you drink coffee on a daily basis?")));
+			 log.info("Preloading " + repository.save(new Question("Do eat french fries with ketchup?")));
+				     
+			};	    	    
+	}
+}
+
+// Need different interface for each entity
+interface VoterRepository extends JpaRepository<Voter, Long> {
+	
+	//List<Voter> findByVoterName(String name);
+}   
+
+interface QuestionRepository extends JpaRepository<Question, Long> {
+	//Optional<Question> findByQuestionId(Long id);  //
+}
+
+
+@Entity
+class Voter {
+	
+	
+	private @Id @GeneratedValue Long id;
+	private String Name;
+	private ArrayList<Long> Questions = new ArrayList<>();
+	
+	// Constructors
+	public Voter() {}
+	public Voter(String name) {
+		super();
+		Name = name; 
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public String getName() {
+		return Name;
+	}
+	
+	public void setName(String name) {
+		Name = name;
+	}
+	
+	public ArrayList<Long> getQuestions() {
+		return Questions;
+	}
+
+	public void setQuestions(Long question) {
+		Questions.add(question);
+	}
+	
+	@Override
+	public String toString() {
+		return "Voter [id=" + id + ", Name=" + Name + ", Questions=" + Questions + "]";
+	}
+	
+}
+
+
+
+@Entity
+class Question {
+	
+	private @Id @GeneratedValue Long id;
+	private String Description;
+	
+	// Constructors
+	public Question() {}
+	public Question(String description) {
+		super();
+		Description = description;
+	}
+	
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public String getDescription() {
+		return Description;
+	}
+	
+	public void setDescription(String description) {
+		Description = description;
+	}
+	
+	@Override
+	public String toString() {
+		return "Question [id=" + id + ", Description=" + Description + "]";
+	}
+	
+	
+	
+}
+
+// REST API  end points
+
+@RestController
+class VoterController{
+	
+	private final VoterRepository repository;
+	
+	VoterController(VoterRepository repository) {
+		this.repository = repository;
+	}	
+
+	// Aggregate root
+	// tag::get-aggregate-root[]
+	
+	// Get all voters
+	@GetMapping("/voters")
+	List<Voter> all() {
+		return repository.findAll();
+	}
+	// end::get-aggregate-root[]
+	
+	// TODO:  Add POST, DELETE
+	
+	// One voter
+	@GetMapping("/voters/{id}")
+	Voter one(@PathVariable long id){
+		return repository.findById(id)
+			.orElseThrow(() -> new VoterNotFoundException(id));
+	}
+	
+}
+
+@RestController
+class QuestionController{
+	
+	private final QuestionRepository repository;
+	
+	QuestionController(QuestionRepository repository) {
+		this.repository = repository;
+	}	
+
+	// Aggregate root
+	// tag::get-aggregate-root[]
+	@GetMapping("questions")
+	List<Question> all() {
+		return repository.findAll();
+	}
+	// end::get-aggregate-root[]
+	
+	// TODO:  Add POST, DELETE
+	
+}
+
+// ERROR HANDLING
+
+// Error handler
+class VoterNotFoundException extends RuntimeException {
+
+	private static final long serialVersionUID = 1L;
+
+	VoterNotFoundException(Long id) {
+	    super("Could not find voter " + id);
+	  }
+}
+
+class QuestionNotFoundException extends RuntimeException {
+
+	private static final long serialVersionUID = 1L;
+
+	QuestionNotFoundException(Long id) {
+	    super("Could not find question " + id);
+	  }
+}
+
+@ControllerAdvice
+class VoterNotFoundAdvice {
+
+  @ResponseBody
+  @ExceptionHandler(VoterNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  String voterNotFoundHandler(VoterNotFoundException ex) {
+    return ex.getMessage();
+  }
+}
+
+@ControllerAdvice
+class QuestionNotFoundAdvice {
+
+	  @ResponseBody
+	  @ExceptionHandler(QuestionNotFoundException.class)
+	  @ResponseStatus(HttpStatus.NOT_FOUND)
+	  String questionNotFoundHandler(QuestionNotFoundException ex) {
+	    return ex.getMessage();
+	  }
+	}

@@ -1,0 +1,84 @@
+package com.example.voting;
+
+
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+@SpringBootApplication
+public class VotingServiceApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(VotingServiceApplication.class, args);
+	}
+
+}
+
+
+@Configuration
+class LoadDatabase {
+	
+	private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
+	
+	@Bean
+	CommandLineRunner initDatabase(VotingServiceRepository repository){
+		return args -> {
+			 log.info("Preloading " + repository.save(new Voter("Bean the Dog")));
+		     log.info("Preloading " + repository.save(new Voter("Milo Meow")));
+		    };
+	}
+}
+
+interface VotingServiceRepository extends JpaRepository<Voter, Long> {
+	
+}
+
+
+@Entity
+class Voter {
+	
+	
+	private @Id @GeneratedValue Long id;
+	private String Name;
+	
+	// Constructors
+	public Voter() {}
+	public Voter(String name) {
+		super();
+		Name = name;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public String getName() {
+		return Name;
+	}
+	
+	public void setName(String name) {
+		Name = name;
+	}
+	
+	@Override
+	public String toString() {
+		return "Voter [id=" + id + ", Name=" + Name + "]";
+	}
+	
+}
