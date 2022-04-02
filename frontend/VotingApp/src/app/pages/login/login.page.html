@@ -1,0 +1,64 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title size="large">
+      Welcome to the Super Simple Voting App
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-text size="large">
+      <p id="message" class="message">Look for messages here.</p>
+    </ion-text>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding ion-text-center" [fullscreen]="true">
+  
+  <ion-item>
+    <ion-label position="stacked">Enter your name to begin: </ion-label>
+    <ion-input 
+      value="" 
+      [(ngModel)]="loginName" 
+      required="true"
+      placeholder="Name"
+      (ionChange)="loginNameInputChange()">
+    </ion-input>
+  </ion-item>
+
+    <ion-item *ngIf="!loggedIn">
+      <ion-button (click)="login();">Log in</ion-button>
+    </ion-item>
+    <ion-item *ngIf="loggedIn">
+      <ion-button (click)="logout()">Log Out</ion-button>
+    </ion-item>
+       
+  <ion-item [hidden]="hideName">
+    <div>
+      <p position="stacked">Welcome {{ voter?.name }}</p>
+      <p>Below is a list of questions. Select one and answer "Yes" or "No". </p>
+      <p> You can answer each question only once.</p>
+    </div>
+  </ion-item>
+  <ion-item [hidden]="hideVoting">
+    <ion-button (click)="startVoting()">Start Voting</ion-button>
+  </ion-item>     
+  <ion-item>
+      <label for="questions">Choose a question: &nbsp;&nbsp;</label>
+      <select name="questions" id="questions" [(ngModel)]="selectedQuestion" (change)="selectQuestionChange();">
+        <option disabled selected value> -- select a question -- </option>
+        <option *ngFor="let question of questions; let i=index;" [value]="question?.id">
+                {{ question?.description }}
+        </option>
+      </select>
+  </ion-item>
+  <ion-item>
+      <div>Selected: {{ selectedQuestion }}</div>
+  </ion-item>
+  <ion-item>
+    <ion-button color="primary"  (click)="saveVote('y');">Yes</ion-button>
+    <ion-button colora="secondary"  (click)="saveVote('n');">No</ion-button>
+  </ion-item>
+
+ 
+</ion-content>
+

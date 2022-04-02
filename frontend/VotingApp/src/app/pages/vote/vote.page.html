@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Vote
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Vote</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <div>*ngFor="let question of questions; let i=index;"  id="{{ i }}>
+      <ion-item>
+        <ion-label>Choose a question.</ion-label>
+        <ion-select value="0">
+          <ion-select-option value=id>{{ question.description }}</ion-select-option>
+          <!-- <ion-select-option value="blonde">Blonde</ion-select-option>
+          <ion-select-option value="black">Black</ion-select-option>
+          <ion-select-option value="red">Red</ion-select-option> -->
+        </ion-select>
+      </ion-item>
+      <ion-item ion>
+        <ion-button color="primary"  (click)="saveVote('y');">Yes</ion-button>
+        <ion-button colora="secondary"  (click)="saveVote('n');">No</ion-button>
+      </ion-item>
+    </div>
+  </ion-content>
+  <app-explore-container name="Vote"></app-explore-container>
+</ion-content>
