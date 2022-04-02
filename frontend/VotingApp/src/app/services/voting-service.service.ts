@@ -75,11 +75,11 @@ export class VotingServiceService {
     return this.http.post(voterURL, body, this.httpOptions);
   }
 
-  getQuestions(): Observable<Question[]>{
+  getQuestions(){
     console.log("VotingServicer::getQuestions");
     const questionURL = this.baseApiURL + "questions";
     console.log("HTTP CLIENT URL: ", questionURL);
-    return this.http.get<Question[]>(questionURL).pipe(
+    return this.http.get(questionURL).pipe(
        tap(data => console.log("VotingService questions data: ", data)),
        map(data => {return data;}));
   }
@@ -93,7 +93,7 @@ export class VotingServiceService {
        map(data => {return data;}));
   }
 
-  saveVote(vote:any, q_id:any): Observable<Question[]>{
+  saveVote(vote:any, question_id:any): Observable<Question[]>{
     console.log("VotingServicer::saveVote");
     let countPath = "";
 
@@ -101,13 +101,17 @@ export class VotingServiceService {
         countPath = "countYes"
     else 
         countPath = "countNo"
-    const questionURL = this.baseApiURL + "questions/" + countPath + "/" + q_id;
+    const questionURL = this.baseApiURL + "questions/" + countPath + "/" + question_id;
     console.log("HTTP CLIENT URL: ", questionURL);
     return this.http.get<Question[]>(questionURL).pipe(
        tap(data => console.log("VotingService unanswered questions by voter data: ", data)),
        map(data => {return data;}));
   }
 
-
+  getStats(question_id:any) {
+    const questionURL = this.baseApiURL + "questions/stats/" + question_id;
+    console.log("HTTP CLIENT URL: ", questionURL);
+    return this.http.get(questionURL);
+  }
 
 }

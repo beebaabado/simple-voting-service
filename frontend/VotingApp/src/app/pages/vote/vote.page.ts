@@ -9,7 +9,9 @@ import { Router } from '@angular/router';
 })
 export class VotePage {
 
-  private questions = [];
+  questions = [];
+  selectedQuestion = 1; 
+  stats = [];
 
   constructor(
     private voterService: VotingServiceService,
@@ -17,14 +19,54 @@ export class VotePage {
         this.getQuestions();
     }
 
-
+    getQuestionStats(){
+      this.stats = [];
+      this.voterService.getStats(this.selectedQuestion).subscribe(result => {
+          console.log("Stat info for question: ", result);
+          let stat = result;
+          this.stats.push(stat);
+      })
+      console.log("Stats: ", this.stats)
+      this.displayStats();
+    }
+    
     getQuestions(){
-      this.voterService.getQuestions().subscribe(result => (
-          console.log("Voter info: ", result)
-      ));
+      this.questions = []
+      this.voterService.getQuestions().forEach((question) => {
+        var newQuestion = {}
+        newQuestion = question;
+        this.questions.push(newQuestion);
+      });
+      console.log("Questions list: ", this.questions);
+      this.buildQuestionList();
+    }
+  
+    selectQuestionChange(){
+      console.log("Selected Question id: ", this.selectedQuestion);
     }
 
     gotoVoterPage() {
       this.router.navigate(['/tabs/vote']);
     }
-}
+
+    // issues with data binding!! so just build list here
+    // 
+    buildQuestionList() {
+
+      var selectList = document.getElementById("questions");
+      console.log(selectList);
+        this.questions.forEach( question => {
+          var option = document.createElement("option");
+          option.value = question.id;
+          option.innerHTML = question.description;
+          selectList.appendChild(option);
+        }) 
+      }
+    
+    displayStats(){
+      var statsList = document.getElementById("display-stats");
+      Object.keys(this.stats).forEach((stat, index) => { 
+        console.log(`${index}: ${stat}`);
+      })
+    }
+  }

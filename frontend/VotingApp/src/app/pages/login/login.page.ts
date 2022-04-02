@@ -18,19 +18,28 @@ export class LoginPage {
   hideName:boolean = true;
   hideQuestions:boolean = true;
   hideVoting:boolean = true;
+  hideYesNo:boolean = true;
   loggedIn:boolean = false;
-  selectedQuestion: any;
+  selectedQuestion = 0;
   message:string = "Look for messages here..."
 
   constructor(
     private voterService: VotingServiceService,
     private router: Router){
+        // get questions and preload the question list
+        this.getQuestions();
+    }
+
+   
+    
+    displayMessage(message:string) {
+      document.getElementById("display-message").innerHTML = message;
     }
 
     login(){
       console.log("logging in:" ,this.loginName);
       if (this.loginName === "") {
-         document.getElementById("message").innerHTML = "Please enter name.</p>";
+         this.displayMessage("Please Enter name.");
          return;
       }
 
@@ -53,6 +62,8 @@ export class LoginPage {
       this.hideName = true;
       this.hideQuestions = true;
       this.hideVoting = true;
+      this.hideYesNo = true;
+      this.displayMessage("Thanks for voting!");
     }
 
     getVoter(id:any){
@@ -64,27 +75,44 @@ export class LoginPage {
     saveVote(vote:any){
       this.voter.questions.push(this.selectedQuestion);
       this.voterService.saveVote(vote, this.selectedQuestion);
+      this.voterService.saveVoter(this.voter.id, this.selectedQuestion);
+      this.hideYesNo = true;
+      this.displayMessage("Your vote has been recorded:  " + vote);
 
+      // TODO: add selectedQueston id to voters question list.
     }
     
     saveVoter(voter_id, question_id){
-      
       this.voterService.saveVoter(this.voter.id, question_id);
     }
     
-    selectQuestionChange(){
+    selectQuestionChange(id){
       console.log("Selected Question id: ", this.selectedQuestion);
+      this.hideYesNo = false;
     }
      
     startVoting() {
-      let questions = this.voterService.getQuestions();
-      if (questions != null)
-        questions.forEach((question) => {
-          this.questions.push({id:question["id"], description: question["description"]});
-        })
+       if (this.questions.length == 0)
+          this.getQuestions();
+      // this.voterService.getQuestions().forEach((question) => {
+      //   var newQuestion = {}
+      //   newQuestion = question;
+      //   this.questions.push(newQuestion);
+      // });
       this.hideQuestions = false;
+      console.log("Questions list: ", this.questions);
+
     }
     
+    getQuestions(){
+      this.questions = []
+      this.voterService.getQuestions().forEach((question) => {
+        var newQuestion = {}
+        newQuestion = question;
+        this.questions.push(newQuestion);
+      });
+      console.log("Questions list: ", this.questions);
+    }
     // just for debug
     loginNameInputChange(){
       //console.log("Login Name: ", this.loginName)

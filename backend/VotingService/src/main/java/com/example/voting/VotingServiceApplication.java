@@ -63,49 +63,49 @@ class CorsConfiguration
 
 // DATABASE MODEL / CONFIGURATION
 
-@Configuration
-class LoadVoterDatabase {
-
-	private static final Logger log = LoggerFactory.getLogger(LoadVoterDatabase.class);
-
-	@Bean
-	CommandLineRunner initVoterDatabase(VoterRepository repository){
-		
-		Voter v1 = new Voter();
-		v1.setName("Bean the Dog");
-		v1.setQuestions((long) 1);
-		
-		Voter v2 = new Voter();
-		v2.setName("Milo Meow");
-		v2.setQuestions((long) 1);
-		v2.setQuestions((long) 2);
-		
-		return args -> {
-			 log.info("Preloading " + repository.save(v1));
-		     log.info("Preloading " + repository.save(v2));
-		    };
-	}
-
-}
-
-@Configuration
-class LoadQuestionDatabase {
-
-	private static final Logger log = LoggerFactory.getLogger(LoadQuestionDatabase.class);
-
-	@Bean
-	CommandLineRunner initQuestionsDatabase(QuestionRepository repository){
-		
-		return args -> {
-			 log.info("Preloading " + repository.save(new Question("Do you eat french fries with ketchup?")));
-		     log.info("Preloading " + repository.save(new Question("Do drink coffee every day?")));
-		     log.info("Preloading " + repository.save(new Question("If you found a $100 bill would you keep it?")));
-		     log.info("Preloading " + repository.save(new Question("Does your dog bark at the mailperson?")));
-		     log.info("Preloading " + repository.save(new Question("Are you happy with your job?")));
-		    };
-	}
-
-}
+//@Configuration
+//class LoadVoterDatabase {
+//
+//	private static final Logger log = LoggerFactory.getLogger(LoadVoterDatabase.class);
+//
+//	@Bean
+//	CommandLineRunner initVoterDatabase(VoterRepository repository){
+//		
+//		Voter v1 = new Voter();
+//		v1.setName("Bean the Dog");
+//		v1.setQuestions((long) 1);
+//		
+//		Voter v2 = new Voter();
+//		v2.setName("Milo Meow");
+//		v2.setQuestions((long) 1);
+//		v2.setQuestions((long) 2);
+//		
+//		return args -> {
+//			 log.info("Preloading " + repository.save(v1));
+//		     log.info("Preloading " + repository.save(v2));
+//		    };
+//	}
+//
+//}
+//
+//@Configuration
+//class LoadQuestionDatabase {
+//
+//	private static final Logger log = LoggerFactory.getLogger(LoadQuestionDatabase.class);
+//
+//	@Bean
+//	CommandLineRunner initQuestionsDatabase(QuestionRepository repository){
+//		
+//		return args -> {
+//			 log.info("Preloading " + repository.save(new Question("Do you eat french fries with ketchup?")));
+//		     log.info("Preloading " + repository.save(new Question("Do drink coffee every day?")));
+//		     log.info("Preloading " + repository.save(new Question("If you found a $100 bill would you keep it?")));
+//		     log.info("Preloading " + repository.save(new Question("Does your dog bark at the mailperson?")));
+//		     log.info("Preloading " + repository.save(new Question("Are you happy with your job?")));
+//		    };
+//	}
+//
+//}
 
 
 // Need different interface for each entity
@@ -289,6 +289,7 @@ class VoterController{
 	}
 
 	
+	
 	// add new voter
 	@PostMapping("/voters")
 	Voter newVoter(@RequestBody Voter voterInfo) {
@@ -357,6 +358,7 @@ class QuestionController{
 		double percent_yes  = ( (double) count_yes/total_count) * 100;
 		double percent_no  = ( (double) count_no/total_count) * 100;
 		HashMap<String, Long> result_map = new HashMap<>();
+		result_map.put("id", id);
 	    result_map.put("counts_no", count_yes);
 	    result_map.put("counts_yes", count_no);
 	    result_map.put("total_votes", total_count);

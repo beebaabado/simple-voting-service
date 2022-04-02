@@ -7,13 +7,13 @@
 </ion-header>
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-text size="large">
-      <p id="message" class="message">Look for messages here.</p>
+    <ion-text class="message" size="large">
+      <p id="display-message" class="message">Look for messages here.</p>
     </ion-text>
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding ion-text-center" [fullscreen]="true">
-  
+ 
   <ion-item>
     <ion-label position="stacked">Enter your name to begin: </ion-label>
     <ion-input 
@@ -42,19 +42,21 @@
   <ion-item [hidden]="hideVoting">
     <ion-button (click)="startVoting()">Start Voting</ion-button>
   </ion-item>     
-  <ion-item>
+  <ion-item [hidden]="hideQuestions">
       <label for="questions">Choose a question: &nbsp;&nbsp;</label>
       <select name="questions" id="questions" [(ngModel)]="selectedQuestion" (change)="selectQuestionChange();">
         <option disabled selected value> -- select a question -- </option>
-        <option *ngFor="let question of questions; let i=index;" [value]="question?.id">
+        <ng-container  *ngFor="let question of questions; let i=index;">
+        <option [value]="question?.id">
                 {{ question?.description }}
         </option>
+       </ng-container>
       </select>
   </ion-item>
-  <ion-item>
+  <ion-item [hidden]="hideQuestions">
       <div>Selected: {{ selectedQuestion }}</div>
   </ion-item>
-  <ion-item>
+  <ion-item [hidden]="hideYesNo">
     <ion-button color="primary"  (click)="saveVote('y');">Yes</ion-button>
     <ion-button colora="secondary"  (click)="saveVote('n');">No</ion-button>
   </ion-item>
