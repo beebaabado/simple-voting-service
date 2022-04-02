@@ -1,14 +1,43 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Voting Statistics
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
 
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Voting Statistics</ion-title>
+    </ion-toolbar>
+  </ion-header>
   <ion-content>
        <ion-item>
-          <label for="questions">Choose a question: &nbsp;&nbsp;</label> 
+          <label for="questions">Choose a question: &nbsp;&nbsp;</label> -->
           <select name="questions" id="questions" [(ngModel)]="selectedQuestion" (change)="selectQuestionChange();">
-             
+            <option disabled selected value> -- select a question -- </option>
+            <!-- <option *ngFor="let question of questions; let i=index;" [value]="question?.id">
+                    {{ question?.description }}
+            </option> -->
           </select>
       </ion-item>
     
       <ion-item>
         <ion-button color="primary"  (click)="getQuestionStats();">Retrieve Votes</ion-button>
       </ion-item>
-      
+      <ion-item>
+        <h2>Statistics for question {{ selectedQuestion }}</h2>
+        <!-- <ng-container *ngFor="let stat in stats;">
+        <ul >
+          <li>{{ stat }}</li>
+        </ul>
+       </ng-container>  -->
+        <ul id="display-stats" >
+        
+        </ul>
+      </ion-item>
+  </ion-content>
 </ion-content> 
+
+ 

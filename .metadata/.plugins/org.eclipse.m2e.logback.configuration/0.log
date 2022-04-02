@@ -2192,3 +2192,4 @@ java.util.ConcurrentModificationException: null
 2022-04-01 00:21:30,417 [Worker-70: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
 2022-04-01 00:21:30,417 [Worker-70: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered properties files.
 2022-04-01 00:21:30,417 [Worker-70: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /Users/connie/Documents/workspace-spring-tool-suite-4-4.14.0.RELEASE/VotingService/src/test/resources
+2022-04-01 15:14:50,715 [Worker-7: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is out-of-date. Trying to update.
