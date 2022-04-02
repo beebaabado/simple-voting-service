@@ -1,19 +1,15 @@
 package com.example.voting;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,21 +17,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -356,13 +347,22 @@ class QuestionController{
 	}
 	
 	@GetMapping("questions/stats/{id}")
-	Map<Long, Long> totalCounts(@PathVariable long id) {
+	Map<String, Long> totalCounts(@PathVariable long id) {
 		Question q = repository.findById(id)
 				.orElseThrow(() -> new QuestionNotFoundException(id));
-		return {counts_no: q.getCountNo(), counts_yes: q.getCountYes()}
-		
-			
-		
+		// let's calc some stats 
+		long count_yes = q.getCountYes();
+		long count_no = q.getCountNo();
+		long total_count =  count_no + count_yes;
+		double percent_yes  = ( (double) count_yes/total_count) * 100;
+		double percent_no  = ( (double) count_no/total_count) * 100;
+		HashMap<String, Long> result_map = new HashMap<>();
+	    result_map.put("counts_no", count_yes);
+	    result_map.put("counts_yes", count_no);
+	    result_map.put("total_votes", total_count);
+	    result_map.put("percent_yes", (long)percent_yes);
+	    result_map.put("percent_no", (long) percent_no);
+	    return result_map;
 		
 	}
 	
