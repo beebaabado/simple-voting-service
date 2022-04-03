@@ -14,12 +14,12 @@
   </ion-header>
   <ion-content>
        <ion-item>
-          <label for="questions">Choose a question: &nbsp;&nbsp;</label> -->
-          <select name="questions" id="questions" [(ngModel)]="selectedQuestion" (change)="selectQuestionChange();">
+          <label for="questions">Choose a question: &nbsp;&nbsp;</label> 
+          <select name="questions" id="display-questions" [(ngModel)]="selectedQuestion" (change)="selectQuestionChange($event);">
             <option disabled selected value> -- select a question -- </option>
-            <!-- <option *ngFor="let question of questions; let i=index;" [value]="question?.id">
+            <option *ngFor="let question of questions; let i=index;" [value]="question?.id">
                     {{ question?.description }}
-            </option> -->
+            </option> 
           </select>
       </ion-item>
     
@@ -27,15 +27,14 @@
         <ion-button color="primary"  (click)="getQuestionStats();">Retrieve Votes</ion-button>
       </ion-item>
       <ion-item>
-        <h2>Statistics for question {{ selectedQuestion }}</h2>
-        <!-- <ng-container *ngFor="let stat in stats;">
-        <ul >
-          <li>{{ stat }}</li>
-        </ul>
-       </ng-container>  -->
-        <ul id="display-stats" >
-        
-        </ul>
+        <div><h2>Statistics for question {{ selectedQuestion }}</h2></div>
+      </ion-item>
+      <ion-item>
+        <div>
+          <ol  id="display-stats">
+          </ol>
+        </div> 
+
       </ion-item>
   </ion-content>
 </ion-content> 

@@ -21,7 +21,13 @@ export class LoginPage {
   hideYesNo:boolean = true;
   loggedIn:boolean = false;
   selectedQuestion = 0;
+  selectedQuestionId = 0;
   message:string = "Look for messages here..."
+  
+  vote_values= { 
+    "y": "YES", 
+    "n": "NO"
+  }
 
   constructor(
     private voterService: VotingServiceService,
@@ -30,8 +36,6 @@ export class LoginPage {
         this.getQuestions();
     }
 
-   
-    
     displayMessage(message:string) {
       document.getElementById("display-message").innerHTML = message;
     }
@@ -52,7 +56,7 @@ export class LoginPage {
           this.hideVoting = false;
           return result;
         });
-      }
+   }
 
     logout(){
       //reset the page
@@ -73,32 +77,40 @@ export class LoginPage {
     }
     
     saveVote(vote:any){
-      this.voter.questions.push(this.selectedQuestion);
-      this.voterService.saveVote(vote, this.selectedQuestion);
-      this.voterService.saveVoter(this.voter.id, this.selectedQuestion);
+      this.voter.questions.push(this.selectedQuestionId);
+      this.voterService.saveVote(vote, this.selectedQuestion).subscribe(result => {
+          this.displayMessage("Your vote for question " + result['description'] 
+                                  + ": " + this.vote_values[vote] + " has been recoreded.");
+      }).unsubscribe();
+
+      this.voterService.saveVoter(this.voter.id, this.selectedQuestionId).subscribe(result => {
+        console.log("Voter question list updated: ", result);
+      });
       this.hideYesNo = true;
       this.displayMessage("Your vote has been recorded:  " + vote);
-
-      // TODO: add selectedQueston id to voters question list.
+      this.disableQuestions(); 
     }
     
+    disableQuestions() {
+        let options = document.getElementById("display-questions").children;
+        console.log(this.selectedQuestion);
+        options.item(this.selectedQuestion).setAttribute("disabled", "disabled");
+    }
+
     saveVoter(voter_id, question_id){
       this.voterService.saveVoter(this.voter.id, question_id);
     }
     
-    selectQuestionChange(id){
-      console.log("Selected Question id: ", this.selectedQuestion);
+    selectQuestionChange(event: any){
+      console.log("Selected Question: ", this.selectedQuestion);
+      this.selectedQuestionId = event.target.value;
       this.hideYesNo = false;
+      console.log("Selected Question id: ", this.selectedQuestionId);
     }
      
     startVoting() {
        if (this.questions.length == 0)
           this.getQuestions();
-      // this.voterService.getQuestions().forEach((question) => {
-      //   var newQuestion = {}
-      //   newQuestion = question;
-      //   this.questions.push(newQuestion);
-      // });
       this.hideQuestions = false;
       console.log("Questions list: ", this.questions);
 
@@ -106,13 +118,21 @@ export class LoginPage {
     
     getQuestions(){
       this.questions = []
-      this.voterService.getQuestions().forEach((question) => {
-        var newQuestion = {}
-        newQuestion = question;
-        this.questions.push(newQuestion);
+      this.voterService.getQuestions().subscribe(result => {
+          result.forEach (question => {
+          var newQuestion = new Question();
+        // newQuestion = question;
+          newQuestion.id = question.id;
+          newQuestion.counts_no = question.counts_no;
+          newQuestion.counts_yes = question.counts_yes;
+          newQuestion.description = question.description;
+          this.questions.push(newQuestion);
+
+        })
       });
       console.log("Questions list: ", this.questions);
     }
+    
     // just for debug
     loginNameInputChange(){
       //console.log("Login Name: ", this.loginName)
@@ -120,7 +140,5 @@ export class LoginPage {
 
     // gotoVoterPage() {
     //   this.router.navigate(['/tabs/vote']);
-    // }
-  
-    
+    // }    
 }

@@ -35,8 +35,8 @@
   <ion-item [hidden]="hideName">
     <div>
       <p position="stacked">Welcome {{ voter?.name }}</p>
-      <p>Below is a list of questions. Select one and answer "Yes" or "No". </p>
-      <p> You can answer each question only once.</p>
+      <p>Click 'Start Voting' to display a list of questions. Select one and answer "Yes" or "No". </p>
+      <p> You may answer each question only once.</p>
     </div>
   </ion-item>
   <ion-item [hidden]="hideVoting">
@@ -44,13 +44,11 @@
   </ion-item>     
   <ion-item [hidden]="hideQuestions">
       <label for="questions">Choose a question: &nbsp;&nbsp;</label>
-      <select name="questions" id="questions" [(ngModel)]="selectedQuestion" (change)="selectQuestionChange();">
+        <select name="questions" id="display-questions" [(ngModel)]="selectedQuestion" (change)="selectQuestionChange($event);">
         <option disabled selected value> -- select a question -- </option>
-        <ng-container  *ngFor="let question of questions; let i=index;">
-        <option [value]="question?.id">
+        <option *ngFor='let question of questions; let i=index;' [value]="question?.id">
                 {{ question?.description }}
         </option>
-       </ng-container>
       </select>
   </ion-item>
   <ion-item [hidden]="hideQuestions">

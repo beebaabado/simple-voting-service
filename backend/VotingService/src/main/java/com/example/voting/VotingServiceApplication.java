@@ -210,7 +210,7 @@ class Question {
 	}
 	
 	public void setCountNo() {
-		this.countNo = countNo + 1;
+		this.countNo = this.countNo + 1;
 	}
 	
 	public Integer getCountYes() {
@@ -218,7 +218,7 @@ class Question {
 	}
 	
 	public void setCountYes() {
-		this.countYes = countYes + 1;
+		this.countYes = this.countYes + 1;
 	}
 
 	@Override
@@ -284,6 +284,8 @@ class VoterController{
 	
 		Voter existingVoter = repository.findById(id)
 			.orElseThrow(() -> new VoterNotFoundException(id));
+		
+		//TODO do not add if question already in list
 		existingVoter.setQuestions(q_id);;
 		return repository.save(existingVoter);
 	}

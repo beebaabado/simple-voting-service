@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { VotingServiceService } from '../../services/voting-service.service';
 import { Router } from '@angular/router';
+import { Stats } from 'src/app/types/stats';
+import { Question } from 'src/app/types/question';
 
 @Component({
   selector: 'app-vote',
@@ -10,8 +12,9 @@ import { Router } from '@angular/router';
 export class VotePage {
 
   questions = [];
-  selectedQuestion = 1; 
-  stats = [];
+  selectedQuestion = 0; 
+  selectedQuestionId = 0;
+  stats:Stats;
 
   constructor(
     private voterService: VotingServiceService,
@@ -20,53 +23,60 @@ export class VotePage {
     }
 
     getQuestionStats(){
-      this.stats = [];
+      this.stats = new Stats();
       this.voterService.getStats(this.selectedQuestion).subscribe(result => {
           console.log("Stat info for question: ", result);
-          let stat = result;
-          this.stats.push(stat);
+          this.stats.counts_no = result.counts_no;
+          this.stats.counts_yes = result.counts_yes;
+          this.stats.percent_no = result.percent_no;
+          this.stats.percent_yes = result.percent_yes;
+          this.stats.id = result.id;
       })
-      console.log("Stats: ", this.stats)
+      //console.log("Stats: ",this.stats);
       this.displayStats();
     }
     
     getQuestions(){
       this.questions = []
-      this.voterService.getQuestions().forEach((question) => {
-        var newQuestion = {}
-        newQuestion = question;
-        this.questions.push(newQuestion);
+      this.voterService.getQuestions().subscribe(result => {
+          result.forEach (question => {
+          var newQuestion = new Question();
+        // newQuestion = question;
+          newQuestion.id = question.id;
+          newQuestion.counts_no = question.counts_no;
+          newQuestion.counts_yes = question.counts_yes;
+          newQuestion.description = question.description;
+          this.questions.push(newQuestion);
+
+        })
       });
       console.log("Questions list: ", this.questions);
-      this.buildQuestionList();
+      //this.buildQuestionList();
     }
   
-    selectQuestionChange(){
-      console.log("Selected Question id: ", this.selectedQuestion);
+    selectQuestionChange(event: any){
+      console.log("Selected Question: ", this.selectedQuestion);
+      this.selectedQuestionId = event.target.value;
+      console.log("Selected Question id: ", this.selectedQuestionId);
     }
 
     gotoVoterPage() {
       this.router.navigate(['/tabs/vote']);
     }
-
-    // issues with data binding!! so just build list here
-    // 
-    buildQuestionList() {
-
-      var selectList = document.getElementById("questions");
-      console.log(selectList);
-        this.questions.forEach( question => {
-          var option = document.createElement("option");
-          option.value = question.id;
-          option.innerHTML = question.description;
-          selectList.appendChild(option);
-        }) 
-      }
     
     displayStats(){
       var statsList = document.getElementById("display-stats");
-      Object.keys(this.stats).forEach((stat, index) => { 
-        console.log(`${index}: ${stat}`);
+      console.log("display stats: ", Object.keys(this.stats));
+      statsList.innerHTML = '';
+      Object.keys(this.stats).forEach( (key) => {
+        console.log("key: ", key)
+         if (key != "id") {
+          var  li = document.createElement("li");
+          console.log(this.stats[key])
+          li.innerHTML = key + ": " + this.stats[key];
+          statsList.appendChild(li);
+         }
       })
     }
+
   }

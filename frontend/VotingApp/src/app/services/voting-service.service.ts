@@ -5,7 +5,7 @@ import { Question } from '../types/question';
 import { Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-
+import { Stats } from 'src/app/types/stats';
 
 @Injectable({
   providedIn: 'root'
@@ -35,10 +35,6 @@ export class VotingServiceService {
     //this.allVotersData=[];
     const voterURL = this.baseApiURL + "voters";
     console.log("HTTP CLIENT URL: ", voterURL);
-    // return this.http.get(voterURL).pipe(
-    //   tap(data => console.log("VotingService voters data", data)),  // interecept stream to print data 
-    //   map(data=>{this.allBeersData.push(data[0]);  // if you return this line get length only which = 1
-    //               return this.allBeersData;}));  // just return data
 
      return this.http.get<Voter[]>(voterURL).pipe(
        tap(data => console.log("VotingService voters data: ", data)),
@@ -61,7 +57,7 @@ export class VotingServiceService {
   saveVoter(voter_id:any, question_id:any): Observable<Voter> {
     const voterURL = this.baseApiURL + "voters"; //+ "?id=" + voter_id + "&" + "question=" + question_id;
     const body = {id: voter_id, question: question_id};
-    console.log("HTTP CLIENT URL: ", voterURL);
+    console.log("HTTP CLIENT URL: ", voterURL, body);
     return this.http.put<Voter>(voterURL, body).pipe(
       tap(data => console.log("VotingService voter update: ", data)),
       map(data => {return data;}));
@@ -75,11 +71,11 @@ export class VotingServiceService {
     return this.http.post(voterURL, body, this.httpOptions);
   }
 
-  getQuestions(){
+  getQuestions(): Observable<Question[]>{
     console.log("VotingServicer::getQuestions");
     const questionURL = this.baseApiURL + "questions";
     console.log("HTTP CLIENT URL: ", questionURL);
-    return this.http.get(questionURL).pipe(
+    return this.http.get<Question[]>(questionURL).pipe(
        tap(data => console.log("VotingService questions data: ", data)),
        map(data => {return data;}));
   }
@@ -104,14 +100,14 @@ export class VotingServiceService {
     const questionURL = this.baseApiURL + "questions/" + countPath + "/" + question_id;
     console.log("HTTP CLIENT URL: ", questionURL);
     return this.http.get<Question[]>(questionURL).pipe(
-       tap(data => console.log("VotingService unanswered questions by voter data: ", data)),
+       tap(data => console.log("VotingService saved vote", data)),
        map(data => {return data;}));
   }
 
-  getStats(question_id:any) {
+  getStats(question_id:any): Observable<Stats> {
     const questionURL = this.baseApiURL + "questions/stats/" + question_id;
     console.log("HTTP CLIENT URL: ", questionURL);
-    return this.http.get(questionURL);
+    return this.http.get<Stats>(questionURL);
   }
 
 }
