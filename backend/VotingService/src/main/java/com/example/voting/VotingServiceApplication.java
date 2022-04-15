@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.SequenceGenerator;
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -19,6 +22,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -60,6 +64,14 @@ class CorsConfiguration
     }
 }
 
+//
+//@Bean
+//public DataSource jdbcDataSource() {
+//    SingleConnectionDataSource ds = new SingleConnectionDataSource();
+//    ds.setDriverClassName("org.sqlite.JDBC");
+//    ds.setUrl("jdbc:sqlite:sqlitesample.db");
+//    return ds;
+//}
 
 // DATABASE MODEL / CONFIGURATION
 
@@ -98,9 +110,9 @@ class CorsConfiguration
 //		
 //		return args -> {
 //			 log.info("Preloading " + repository.save(new Question("Do you eat french fries with ketchup?")));
-//		     log.info("Preloading " + repository.save(new Question("Do drink coffee every day?")));
+//		     log.info("Preloading " + repository.save(new Question("Do you drink coffee every day?")));
 //		     log.info("Preloading " + repository.save(new Question("If you found a $100 bill would you keep it?")));
-//		     log.info("Preloading " + repository.save(new Question("Does your dog bark at the mailperson?")));
+//		     log.info("Preloading " + repository.save(new Question("Would you live in the metaverse?")));
 //		     log.info("Preloading " + repository.save(new Question("Are you happy with your job?")));
 //		    };
 //	}
@@ -118,6 +130,7 @@ interface VoterRepository extends JpaRepository<Voter, Long> {
 @Repository
 interface QuestionRepository extends JpaRepository<Question, Long> {
 
+	// return questions exclude question.id
 	@Query(value = "SELECT * FROM question WHERE question.id != :id", nativeQuery = true)
 	List<Question> findAllQuestions(
 			@Param("id") long id);
@@ -126,11 +139,15 @@ interface QuestionRepository extends JpaRepository<Question, Long> {
 
 
 @Entity
-@Table(name="voter")
 class Voter {
 
 
 	private @Id @GeneratedValue Long id;
+	
+//	@GeneratedValue(generator = "voter_id_seq", strategy = GenerationType.SEQUENCE)
+//	@SequenceGenerator(name = "voter_id_seq", sequenceName = "voter_id_seq")
+//	Long id;
+	
 	private String name;
 	private ArrayList<Long> questions = new ArrayList<>();
 
@@ -174,10 +191,13 @@ class Voter {
 
 
 @Entity
-@Table(name="question")
 class Question {
-
+    
+	
 	private @Id @GeneratedValue Long id;
+//	@GeneratedValue(generator = "question_id_seq", strategy = GenerationType.SEQUENCE)
+//	@SequenceGenerator(name = "question_id_seq", sequenceName = "question_id_seq")
+//	Long id;
 	private String description;
 	private Integer countNo = 0;
 	private Integer countYes = 0;
@@ -328,10 +348,10 @@ class QuestionController{
 	}
 	// end::get-aggregate-root[]
 
-	@GetMapping("questions/{voter_id}")
-	List<Question> allforVoter(@PathVariable long voter_id) {
-		return repository.findAllQuestions(voter_id);  // need to return by voter id
-	}
+//	@GetMapping("questions/{voter_id}")
+//	List<Question> allforVoter(@PathVariable long voter_id) {
+//		return repository.findAllQuestions(voter_id);  // need to return by voter id
+//	}
 	
 	@GetMapping("questions/countYes/{id}")
 	Question updateCountYes(@PathVariable long id) {
@@ -353,7 +373,7 @@ class QuestionController{
 	Map<String, Long> totalCounts(@PathVariable long id) {
 		Question q = repository.findById(id)
 				.orElseThrow(() -> new QuestionNotFoundException(id));
-		// let's calc some stats 
+		// Calculate stats 
 		long count_yes = q.getCountYes();
 		long count_no = q.getCountNo();
 		long total_count =  count_no + count_yes;
@@ -374,7 +394,6 @@ class QuestionController{
 }
 // ERROR HANDLING
 
-// Error handler
 class VoterNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;

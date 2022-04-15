@@ -1,46 +1,48 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title size="large">
-      Welcome to the Super Simple Voting App
+    <ion-title class = "ion-text-center">
+      Welcome to the Super Simple Voting App    
     </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-text class="message" size="large">
-      <p id="display-message" class="message">Look for messages here.</p>
-    </ion-text>
+    <ion-grid>
+      <ion-row>
+        <ion-col size=3>
+          <img [src]="img_path" alt="Bean">
+        </ion-col>
+        <ion-col>
+        <ion-text class="message ion-text-center" size="large">
+          <p id="display-message" class="message"> Look for messages here.</p>
+        </ion-text>
+        </ion-col>
+    </ion-row>  
+  </ion-grid>
   </ion-toolbar>
 </ion-header>
-<ion-content class="ion-padding ion-text-center" [fullscreen]="true">
- 
-  <ion-item>
-    <ion-label position="stacked">Enter your name to begin: </ion-label>
-    <ion-input 
+<ion-content lines="none" class="ion-text-center" [fullscreen]="true">
+    <ion-item lines="none"> </ion-item>
+    <ion-label  class="ion-text-center" position="stacked">Enter your name to begin:</ion-label>
+    <ion-input class="ion-text-center"
       value="" 
       [(ngModel)]="loginName" 
       required="true"
       placeholder="Name"
       (ionChange)="loginNameInputChange()">
     </ion-input>
-  </ion-item>
-
-    <ion-item *ngIf="!loggedIn">
-      <ion-button (click)="login();">Log in</ion-button>
-    </ion-item>
-    <ion-item *ngIf="loggedIn">
-      <ion-button (click)="logout()">Log Out</ion-button>
-    </ion-item>
-       
+  
+  <ion-button color="dark" class="ion-text-center" (click)="login();">{{loginText}}</ion-button>
+  
   <ion-item [hidden]="hideName">
     <div>
-      <p position="stacked">Welcome {{ voter?.name }}</p>
+      <p>Welcome {{ voter?.name }}</p>
       <p>Click 'Start Voting' to display a list of questions. Select one and answer "Yes" or "No". </p>
       <p> You may answer each question only once.</p>
     </div>
   </ion-item>
   <ion-item [hidden]="hideVoting">
-    <ion-button (click)="startVoting()">Start Voting</ion-button>
+    <ion-button color="dark" (click)="startVoting()">Start Voting</ion-button>
   </ion-item>     
   <ion-item [hidden]="hideQuestions">
       <label for="questions">Choose a question: &nbsp;&nbsp;</label>
@@ -54,11 +56,9 @@
   <ion-item [hidden]="hideQuestions">
       <div>Selected: {{ selectedQuestion }}</div>
   </ion-item>
-  <ion-item [hidden]="hideYesNo">
-    <ion-button color="primary"  (click)="saveVote('y');">Yes</ion-button>
-    <ion-button colora="secondary"  (click)="saveVote('n');">No</ion-button>
+  <ion-item class="ion-text-center" [hidden]="hideYesNo">
+    <ion-button color="dark"  (click)="saveVote('y');">Yes</ion-button>
+    <ion-button color="dark"  (click)="saveVote('n');">No</ion-button>
   </ion-item>
-
- 
 </ion-content>
 

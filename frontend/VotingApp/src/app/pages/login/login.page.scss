@@ -1,10 +1,20 @@
-.center {
-    text-align:center;
+ion-toolbar {
+   --background: orange;
 }
-
 .message {
     padding: 20px;
 }
+
 ion-text {
-    color: red
+    color: red;
+}
+
+ion-input {
+    border: solid 1px darkgray;
+}
+
+img {
+    margin-right: 10px;
+    float: left;
+    width: 100px;
 }

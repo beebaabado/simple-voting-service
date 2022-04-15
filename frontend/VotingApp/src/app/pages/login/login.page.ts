@@ -13,6 +13,8 @@ import { Question } from 'src/app/types/question';
 export class LoginPage {
 
   loginName = "";
+  loginText = "Login";
+  img_path = "/assets/images/img_bean.png"
   voter:any;
   questions = [];
   hideName:boolean = true;
@@ -42,6 +44,12 @@ export class LoginPage {
 
     login(){
       console.log("logging in:" ,this.loginName);
+
+      if (this.loginText === "Logout"){
+        this.logout();
+        return;
+      }
+
       if (this.loginName === "") {
          this.displayMessage("Please Enter name.");
          return;
@@ -55,6 +63,7 @@ export class LoginPage {
           this.hideName = false;
           this.loggedIn = true;
           this.hideVoting = false;
+          this.loginText = "Logout";
           return result;
         },
         (err) => { console.log("Login Voter error: ", err)},
@@ -68,6 +77,7 @@ export class LoginPage {
     logout(){
       //reset the page
       this.loginName = ""
+      this.loginText = "Login";
       this.loggedIn = false;
       this.voter = {};
       this.hideName = true;
@@ -109,9 +119,14 @@ export class LoginPage {
     
     disableQuestions() {
         let options = document.getElementById("display-questions").children;
-        console.log("disable selected question: ", this.selectedQuestion);
-        options.item(this.selectedQuestion).setAttribute("disabled", "disabled");
-
+        console.log("disable selected question: ", this.selectedQuestionId);
+        for (let i = 0; i < options.length; i++) {
+          if (options[i].getAttribute('value') == this.selectedQuestionId.toString()) {
+            options[i].setAttribute("disabled", "disabled");
+          }
+          
+        }
+       
         if (this.voter.questions.length >= this.questions.length) {
           this.displayMessage("All questions have been answered.  Thank you for voting.");
           this.hideVoting = true;

@@ -1,3 +1,6 @@
+// Sqlite dialect class,  Springboot does not come with one for SQLite
+// Cut and paste...
+
 package com.example.voting.sqlLiteDialect;
 
 import java.sql.Types;
@@ -8,7 +11,6 @@ import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.dialect.function.VarArgsSQLFunction;
 import org.hibernate.type.StringType;
 
-//NOTE:  this is cut and paste
 
 public class SQLiteDialect extends Dialect {
 

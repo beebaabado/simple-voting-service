@@ -32,7 +32,7 @@ export class VotePage {
           this.stats.percent_yes = result.percent_yes;
           this.stats.total_votes = result.total_votes;
           this.stats.id = result.id;
-          console.log("Stat info for question: ", this.stats);
+          console.log("Stat info for question: ",  this.stats);
       },
        (err) => { console.log("Get question stats error: ", err)},
        () => { 

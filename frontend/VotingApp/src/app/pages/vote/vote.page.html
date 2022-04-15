@@ -1,17 +1,17 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
+    <ion-title class="ion-text-center">
       Voting Statistics
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+<ion-content class="ion-text-center" [fullscreen]="true">
+  <!-- <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Voting Statistics</ion-title>
     </ion-toolbar>
-  </ion-header>
+  </ion-header> -->
   <ion-content>
        <ion-item>
           <label for="questions">Choose a question: &nbsp;&nbsp;</label> 
@@ -24,10 +24,10 @@
       </ion-item>
     
       <ion-item>
-        <ion-button color="primary"  (click)="getQuestionStats();">Retrieve Votes</ion-button>
+        <ion-button color="dark"  (click)="getQuestionStats();">Retrieve Votes</ion-button>
       </ion-item>
       <ion-item>
-        <div><h2>Statistics for question {{ selectedQuestion }}</h2></div>
+        <div><h2>Statistics for question {{ selectedQuestion }}: </h2></div>
       </ion-item>
       <ion-item>
         <div>
